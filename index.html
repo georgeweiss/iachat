@@ -4,31 +4,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>IA Chat v0.0.1</title>
+<title>IA Chat</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
 html,body{height:100%;width:100%;overflow:hidden;background:#0a0a0f;font-family:'DM Mono',monospace;color:#e8e8f0}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,160,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-#app{position:fixed;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;z-index:1}
-#hdr{background:#0d0d13;border-bottom:1px solid #222230;padding:12px 18px;padding-top:max(12px,env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.hl{display:flex;align-items:center;gap:10px}
-.logo{width:32px;height:32px;border-radius:9px;background:#0f2018;border:1px solid #00e5a040;display:flex;align-items:center;justify-content:center}
+#app{position:fixed;top:0;left:0;right:0;bottom:0;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;z-index:1}
+#hdr{background:#0d0d13;border-bottom:1px solid #222230;padding:12px 18px;padding-top:max(12px,env(safe-area-inset-top));display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;-webkit-flex-shrink:0;flex-shrink:0}
+.hl{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:10px}
+.logo{width:32px;height:32px;border-radius:9px;background:#0f2018;border:1px solid #00e5a040;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center}
 .logo svg{width:15px;height:15px;stroke:#00e5a0;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .htitle{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;color:#e8e8f0}
 .htitle b{color:#00e5a0}
 .ver{font-size:10px;color:#555570;background:#16161f;border:1px solid #222230;padding:3px 9px;border-radius:20px}
-.dot{width:7px;height:7px;border-radius:50%;background:#00e5a0;box-shadow:0 0 7px #00e5a0;animation:pulse 2s ease-in-out infinite}
+.dot{width:7px;height:7px;border-radius:50%;background:#00e5a0;box-shadow:0 0 7px #00e5a0;-webkit-animation:pulse 2s ease-in-out infinite;animation:pulse 2s ease-in-out infinite}
+@-webkit-keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-#msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 14px;display:flex;flex-direction:column;gap:14px}
-#emp{margin:auto;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:20px}
-.eico{width:54px;height:54px;border-radius:16px;background:#0f2018;border:1px solid #00e5a030;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+#msgs{-webkit-flex:1;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 14px;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:14px}
+#emp{margin:auto;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;gap:12px;text-align:center;padding:20px}
+.eico{width:54px;height:54px;border-radius:16px;background:#0f2018;border:1px solid #00e5a030;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;margin-bottom:4px}
 .eico svg{width:24px;height:24px;stroke:#00e5a0;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 #emp h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#e8e8f0}
-.row{display:flex;gap:9px;animation:fadeup .2s ease}
-.row.me{flex-direction:row-reverse}
+.row{display:-webkit-flex;display:flex;gap:9px;-webkit-animation:fadeup .2s ease;animation:fadeup .2s ease}
+.row.me{-webkit-flex-direction:row-reverse;flex-direction:row-reverse}
+@-webkit-keyframes fadeup{from{opacity:0;-webkit-transform:translateY(6px);transform:translateY(6px)}to{opacity:1;-webkit-transform:none;transform:none}}
 @keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.av{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;flex-shrink:0}
+.av{width:28px;height:28px;border-radius:8px;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;-webkit-flex-shrink:0;flex-shrink:0}
 .row.ai .av{background:#0f2018;border:1px solid #00e5a040;color:#00e5a0}
 .row.me .av{background:#0d1824;border:1px solid #00b8ff40;color:#00b8ff}
 .bbl{max-width:calc(100% - 40px);padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.65;word-break:break-word}
@@ -38,27 +40,27 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .bbl pre{background:#08080f;border:1px solid #222230;border-radius:8px;padding:10px;overflow-x:auto;margin:7px 0}
 .bbl code{font-family:'DM Mono',monospace;font-size:12px;background:#0f2018;padding:1px 5px;border-radius:4px;color:#00e5a0}
 .bbl pre code{background:none;padding:0;color:#9090b0}
-.typing{display:flex;gap:5px;align-items:center;padding:3px 0}
-.td{width:6px;height:6px;border-radius:50%;background:#00e5a0;opacity:.3;animation:bo 1.2s ease infinite}
-.td:nth-child(2){animation-delay:.2s}
-.td:nth-child(3){animation-delay:.4s}
+.typing{display:-webkit-flex;display:flex;gap:5px;-webkit-align-items:center;align-items:center;padding:3px 0}
+.td{width:6px;height:6px;border-radius:50%;background:#00e5a0;opacity:.3;-webkit-animation:bo 1.2s ease infinite;animation:bo 1.2s ease infinite}
+.td:nth-child(2){-webkit-animation-delay:.2s;animation-delay:.2s}
+.td:nth-child(3){-webkit-animation-delay:.4s;animation-delay:.4s}
+@-webkit-keyframes bo{0%,60%,100%{-webkit-transform:translateY(0);transform:translateY(0);opacity:.3}30%{-webkit-transform:translateY(-5px);transform:translateY(-5px);opacity:1}}
 @keyframes bo{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-5px);opacity:1}}
 .errmsg{margin-left:37px;padding:9px 13px;background:#1f0d0d;border:1px solid #ff505035;border-radius:9px;color:#ff8080;font-size:12px;max-width:calc(100% - 37px);line-height:1.5;word-break:break-all}
-.dbgmsg{margin:2px 0;padding:6px 10px;background:#1a1a00;border:1px solid #ffff0040;border-radius:8px;color:#ffff80;font-size:11px;word-break:break-all}
-#ftr{background:#0d0d13;border-top:1px solid #222230;padding:10px 14px;padding-bottom:max(14px,env(safe-area-inset-bottom));flex-shrink:0}
-.iw{display:flex;align-items:center;gap:8px;background:#13131c;border:1px solid #222230;border-radius:16px;padding:6px 6px 6px 14px;min-height:52px}
+#ftr{background:#0d0d13;border-top:1px solid #222230;padding:10px 14px;padding-bottom:max(14px,env(safe-area-inset-bottom));-webkit-flex-shrink:0;flex-shrink:0}
+.iw{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;background:#13131c;border:1px solid #222230;border-radius:16px;padding:6px 6px 6px 14px;min-height:52px}
 .iw:focus-within{border-color:#00e5a050}
-textarea{flex:1;background:transparent;border:none;outline:none;color:#e8e8f0;font-family:'DM Mono',monospace;font-size:16px;line-height:1.5;resize:none;max-height:100px;overflow-y:auto;-webkit-overflow-scrolling:touch;caret-color:#00e5a0;-webkit-appearance:none;padding:4px 0}
+textarea{-webkit-flex:1;flex:1;background:transparent;border:none;outline:none;color:#e8e8f0;font-family:'DM Mono',monospace;font-size:16px;line-height:1.5;resize:none;max-height:100px;overflow-y:auto;-webkit-overflow-scrolling:touch;caret-color:#00e5a0;-webkit-appearance:none;appearance:none;padding:4px 0}
 textarea::placeholder{color:#40405a}
 textarea::-webkit-scrollbar{display:none}
-#sbtn{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:12px;border:none;background:#00e5a0;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;-webkit-appearance:none;touch-action:manipulation;position:relative;z-index:99}
+#sbtn{width:40px;height:40px;min-width:40px;min-height:40px;border-radius:12px;border:none;background:#00e5a0;cursor:pointer;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;-webkit-flex-shrink:0;flex-shrink:0;-webkit-appearance:none;appearance:none;touch-action:manipulation}
 #sbtn:active{opacity:.7}
 #sbtn.busy{background:#16161f;border:1px solid #222230}
 #sbtn svg{width:15px;height:15px;stroke:#000;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 #sbtn.busy svg{stroke:#40405a}
-.fb{display:flex;justify-content:space-between;align-items:center;padding:5px 2px 0}
+.fb{display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:center;align-items:center;padding:5px 2px 0}
 .hint{font-size:11px;color:#40405a}
-#clrbtn{font-size:11px;color:#40405a;background:none;border:none;font-family:'DM Mono',monospace;cursor:pointer;padding:4px;-webkit-appearance:none;touch-action:manipulation}
+#clrbtn{font-size:11px;color:#40405a;background:none;border:none;font-family:'DM Mono',monospace;cursor:pointer;padding:4px;-webkit-appearance:none;appearance:none;touch-action:manipulation}
 #clrbtn:active{color:#a0a0c0}
 </style>
 </head>
@@ -68,18 +70,16 @@ textarea::-webkit-scrollbar{display:none}
     <div class="hl">
       <div class="logo"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
       <div class="htitle">IA<b>Chat</b></div>
-      <span class="ver">v0.0.1</span>
+      <span class="ver">v0.0.2</span>
     </div>
     <div class="dot"></div>
   </div>
-
   <div id="msgs">
     <div id="emp">
       <div class="eico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
       <h2>E ai, o que vc quer?</h2>
     </div>
   </div>
-
   <div id="ftr">
     <div class="iw">
       <textarea id="tinp" placeholder="Manda bala..."></textarea>
@@ -93,53 +93,43 @@ textarea::-webkit-scrollbar{display:none}
     </div>
   </div>
 </div>
-
 <script>
-var KEY = "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";
-var MODEL = "openai/gpt-oss-120b";
+var KEY      = "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";
+var MODEL    = "openai/gpt-oss-120b";
 var ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-var history = [];
-var busy = false;
+var history  = [];
+var busy     = false;
 
-var msgsEl = document.getElementById("msgs");
-var empEl  = document.getElementById("emp");
-var tinp   = document.getElementById("tinp");
-var sbtn   = document.getElementById("sbtn");
-var clrbtn = document.getElementById("clrbtn");
+var msgsEl = document.getElementById(“msgs”);
+var empEl  = document.getElementById(“emp”);
+var tinp   = document.getElementById(“tinp”);
+var sbtn   = document.getElementById(“sbtn”);
+var clrbtn = document.getElementById(“clrbtn”);
 
-function dbg(msg) {
-  var d = document.createElement("div");
-  d.className = "dbgmsg";
-  d.textContent = "[dbg] " + msg;
-  msgsEl.appendChild(d);
-  msgsEl.scrollTop = msgsEl.scrollHeight;
+function esc(s){
+return s.replace(/&/g,”&”).replace(/</g,”<”).replace(/>/g,”>”);
 }
 
-function esc(s) {
-  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-
-function renderMd(s) {
-  s = s.replace(/```[\w]*\n?([\s\S]*?)```/g,function(m,c){return "<pre><code>"+esc(c.trim())+"</code></pre>";});
-
+function renderMd(s){
+s = s.replace(/`[\w]*\n?([\s\S]*?)`/g,function(m,c){return “<pre><code>”+esc(c.trim())+”</code></pre>”;});
 s = s.replace(/`([^`\n]+)`/g,function(m,c){return “<code>”+esc(c)+”</code>”;});
 s = s.replace(/**(.+?)**/g,”<strong>$1</strong>”);
 s = s.replace(/\n/g,”<br>”);
 return s;
 }
 
-function addRow(role, text) {
+function addRow(role, text){
 empEl.style.display = “none”;
 var d = document.createElement(“div”);
 d.className = “row “ + role;
-var label = role === “me” ? “V” : “G”;
+var label   = role === “me” ? “V” : “G”;
 var content = role === “me” ? esc(text).replace(/\n/g,”<br>”) : renderMd(text);
 d.innerHTML = “<div class="av">”+label+”</div><div class="bbl">”+content+”</div>”;
 msgsEl.appendChild(d);
 msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-function showTyping() {
+function showTyping(){
 empEl.style.display = “none”;
 var d = document.createElement(“div”);
 d.className = “row ai”;
@@ -149,97 +139,115 @@ msgsEl.appendChild(d);
 msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-function hideTyping() {
+function hideTyping(){
 var el = document.getElementById(“typrow”);
-if (el) el.parentNode.removeChild(el);
+if(el) el.parentNode.removeChild(el);
 }
 
-function showErr(msg) {
+function showErr(msg){
 hideTyping();
 var d = document.createElement(“div”);
 d.className = “errmsg”;
 d.textContent = “Erro: “ + msg;
 msgsEl.appendChild(d);
 msgsEl.scrollTop = msgsEl.scrollHeight;
+busy = false;
+sbtn.classList.remove(“busy”);
 }
 
-function setBusy(v) {
-busy = v;
-if (v) { sbtn.classList.add(“busy”); } else { sbtn.classList.remove(“busy”); }
-}
-
-function doSend() {
-dbg(“botao pressionado”);
+function doSend(){
+if(busy) return;
 var txt = tinp.value.trim();
-if (!txt) { dbg(“texto vazio, abortando”); return; }
-if (busy)  { dbg(“busy=true, abortando”); return; }
+if(!txt) return;
 
-setBusy(true);
-var msg = txt;
+busy = true;
+sbtn.classList.add(“busy”);
+
 tinp.value = “”;
 tinp.style.height = “auto”;
 
-addRow(“me”, msg);
-history.push({ role: “user”, content: msg });
+addRow(“me”, txt);
+history.push({role:“user”, content:txt});
 showTyping();
-dbg(“enviando fetch…”);
 
-fetch(ENDPOINT, {
-method: “POST”,
-headers: {
-“Content-Type”: “application/json”,
-“Authorization”: “Bearer “ + KEY
-},
-body: JSON.stringify({ model: MODEL, messages: history, temperature: 0.7, max_tokens: 2048 })
-})
-.then(function(res) {
-dbg(“status: “ + res.status);
-return res.json().then(function(d) { return { s: res.status, d: d }; });
-})
-.then(function(r) {
-setBusy(false);
-if (r.s === 200) {
-var reply = r.d.choices[0].message.content;
+var payload = JSON.stringify({
+model: MODEL,
+messages: history,
+temperature: 0.7,
+max_tokens: 2048
+});
+
+var xhr = new XMLHttpRequest();
+xhr.open(“POST”, ENDPOINT, true);
+xhr.setRequestHeader(“Content-Type”, “application/json”);
+xhr.setRequestHeader(“Authorization”, “Bearer “ + KEY);
+xhr.timeout = 30000;
+
+xhr.onload = function(){
+busy = false;
+sbtn.classList.remove(“busy”);
+if(xhr.status === 200){
+try{
+var data  = JSON.parse(xhr.responseText);
+var reply = data.choices[0].message.content;
 hideTyping();
 addRow(“ai”, reply);
-history.push({ role: “assistant”, content: reply });
+history.push({role:“assistant”, content:reply});
+} catch(e){
+showErr(“parse: “ + e.message);
+}
 } else {
-var em = “HTTP “ + r.s;
-if (r.d && r.d.error && r.d.error.message) em = r.d.error.message;
+var em = “HTTP “ + xhr.status;
+try{
+var ed = JSON.parse(xhr.responseText);
+if(ed.error && ed.error.message) em = ed.error.message;
+} catch(e){}
 showErr(em);
 }
-})
-.catch(function(e) {
-setBusy(false);
-dbg(“ERRO: “ + e.message);
-showErr(e.message || “Falha de rede”);
-});
+};
+
+xhr.onerror   = function(){ showErr(“Falha de rede.”); };
+xhr.ontimeout = function(){ showErr(“Timeout.”); };
+xhr.send(payload);
 }
 
-function doClean() {
+function doClean(){
 history = [];
 var kids = Array.prototype.slice.call(msgsEl.children);
-for (var i = 0; i < kids.length; i++) {
-if (kids[i].id !== “emp”) msgsEl.removeChild(kids[i]);
+for(var i=0;i<kids.length;i++){
+if(kids[i].id !== “emp”) msgsEl.removeChild(kids[i]);
 }
+empEl.style.display = “-webkit-flex”;
 empEl.style.display = “flex”;
 }
 
-/* eventos separados, sem inline */
-sbtn.addEventListener(“click”, doSend);
-sbtn.addEventListener(“touchend”, function(e) { e.preventDefault(); doSend(); });
-clrbtn.addEventListener(“click”, doClean);
-clrbtn.addEventListener(“touchend”, function(e) { e.preventDefault(); doClean(); });
+/* Touch: só touchend, preventDefault evita o click subsequente */
+sbtn.addEventListener(“touchend”, function(e){
+e.preventDefault();
+doSend();
+});
+/* Click: só para desktop/teclado */
+sbtn.addEventListener(“click”, function(e){
+if(e.pointerType === “touch”) return;
+doSend();
+});
 
-tinp.addEventListener(“input”, function() {
+clrbtn.addEventListener(“touchend”, function(e){
+e.preventDefault();
+doClean();
+});
+clrbtn.addEventListener(“click”, function(e){
+if(e.pointerType === “touch”) return;
+doClean();
+});
+
+tinp.addEventListener(“input”, function(){
 this.style.height = “auto”;
 this.style.height = Math.min(this.scrollHeight, 100) + “px”;
 });
-tinp.addEventListener(“keydown”, function(e) {
-if (e.key === “Enter” && !e.shiftKey) { e.preventDefault(); doSend(); }
+tinp.addEventListener(“keydown”, function(e){
+if(e.key === “Enter” && !e.shiftKey){ e.preventDefault(); doSend(); }
 });
-
-dbg(“JS carregado OK - v0.0.1”);
 </script>
 
 </body>
