@@ -3,14 +3,13 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>IA Chat</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -18,69 +17,59 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html {
-height: -webkit-fill-available;
-background: #0a0a0f;
-}
-
-body {
-min-height: 100vh;
-min-height: -webkit-fill-available;
+html, body {
+height: 100%;
+width: 100%;
+overflow: hidden;
 background: #0a0a0f;
 color: #e8e8f0;
-font-family: ‘DM Mono’, ‘Courier New’, monospace;
-display: -webkit-flex;
-display: flex;
--webkit-justify-content: center;
-justify-content: center;
+font-family: ‘DM Mono’, monospace;
 }
 
-#app {
-width: 100%;
-max-width: 800px;
-min-height: 100vh;
-min-height: -webkit-fill-available;
-display: -webkit-flex;
-display: flex;
--webkit-flex-direction: column;
-flex-direction: column;
-position: relative;
-}
-
-#app::before {
+body::before {
 content: ‘’;
 position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
+inset: 0;
 background-image:
-linear-gradient(rgba(0,229,160,0.025) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,229,160,0.025) 1px, transparent 1px);
-background-size: 44px 44px;
+linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+background-size: 40px 40px;
 pointer-events: none;
 z-index: 0;
 }
 
-header {
+#app {
 position: fixed;
-top: 0;
+inset: 0;
+display: -webkit-flex;
+display: flex;
+-webkit-flex-direction: column;
+flex-direction: column;
+max-width: 760px;
 left: 50%;
 -webkit-transform: translateX(-50%);
 transform: translateX(-50%);
 width: 100%;
-max-width: 800px;
-z-index: 100;
+z-index: 1;
+}
+
+/* HEADER */
+#hdr {
+-webkit-flex-shrink: 0;
+flex-shrink: 0;
+background: #0d0d13;
+border-bottom: 1px solid #1e1e2e;
+padding: 12px 18px;
+padding-top: max(12px, env(safe-area-inset-top));
 display: -webkit-flex;
 display: flex;
 -webkit-align-items: center;
 align-items: center;
 -webkit-justify-content: space-between;
 justify-content: space-between;
-padding: 14px 20px;
-padding-top: max(14px, env(safe-area-inset-top));
-background: rgba(10,10,15,0.95);
-border-bottom: 1px solid rgba(255,255,255,0.07);
 }
 
-.h-left {
+.hl {
 display: -webkit-flex;
 display: flex;
 -webkit-align-items: center;
@@ -89,10 +78,10 @@ gap: 10px;
 }
 
 .logo {
-width: 34px;
-height: 34px;
-border-radius: 10px;
-background: rgba(0,229,160,0.1);
+width: 32px;
+height: 32px;
+border-radius: 9px;
+background: #0f1f1a;
 border: 1px solid rgba(0,229,160,0.25);
 display: -webkit-flex;
 display: flex;
@@ -101,330 +90,152 @@ align-items: center;
 -webkit-justify-content: center;
 justify-content: center;
 }
+.logo svg { width: 15px; height: 15px; stroke: #00e5a0; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-.logo svg {
-width: 16px;
-height: 16px;
-stroke: #00e5a0;
-fill: none;
-stroke-width: 2;
-stroke-linecap: round;
-stroke-linejoin: round;
-}
+.htitle { font-family: ‘Syne’, sans-serif; font-weight: 800; font-size: 16px; color: #e8e8f0; }
+.htitle b { color: #00e5a0; }
 
-.h-title {
-font-family: ‘Syne’, sans-serif;
-font-weight: 800;
-font-size: 17px;
-color: #e8e8f0;
-letter-spacing: -0.3px;
-}
+.mdl { font-size: 10px; font-family: ‘DM Mono’, monospace; color: #555570; background: #16161f; border: 1px solid #1e1e2e; padding: 3px 9px; border-radius: 20px; }
 
-.h-title span { color: #00e5a0; }
-
-.badge {
-font-size: 10px;
-font-family: ‘DM Mono’, monospace;
-color: #6b6b80;
-background: #18181f;
-border: 1px solid rgba(255,255,255,0.07);
-padding: 3px 9px;
-border-radius: 20px;
-}
-
-.dot {
-width: 7px;
-height: 7px;
+.ondot {
+width: 7px; height: 7px;
 border-radius: 50%;
 background: #00e5a0;
-box-shadow: 0 0 8px #00e5a0;
--webkit-animation: blink 2s ease-in-out infinite;
-animation: blink 2s ease-in-out infinite;
+box-shadow: 0 0 7px #00e5a0;
+-webkit-animation: pulse 2s ease-in-out infinite;
+animation: pulse 2s ease-in-out infinite;
 }
+@-webkit-keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-@-webkit-keyframes blink {
-0%, 100% { opacity: 1; }
-50% { opacity: 0.3; }
-}
-@keyframes blink {
-0%, 100% { opacity: 1; }
-50% { opacity: 0.3; }
-}
-
-#messages {
+/* MESSAGES */
+#msgs {
 -webkit-flex: 1;
 flex: 1;
 overflow-y: auto;
 -webkit-overflow-scrolling: touch;
-padding: 80px 16px 120px;
+padding: 16px 14px;
 display: -webkit-flex;
 display: flex;
 -webkit-flex-direction: column;
 flex-direction: column;
-gap: 18px;
-position: relative;
-z-index: 1;
+gap: 16px;
 }
 
-#empty {
+/* EMPTY */
+#emp {
+margin: auto;
 display: -webkit-flex;
 display: flex;
 -webkit-flex-direction: column;
 flex-direction: column;
 -webkit-align-items: center;
 align-items: center;
--webkit-justify-content: center;
-justify-content: center;
+gap: 12px;
 text-align: center;
-gap: 14px;
-padding: 40px 20px 20px;
+padding: 20px;
+width: 100%;
 }
-
-.empty-icon {
-width: 60px;
-height: 60px;
-border-radius: 18px;
-background: rgba(0,229,160,0.06);
-border: 1px solid rgba(0,229,160,0.18);
+.eico {
+width: 56px; height: 56px;
+border-radius: 16px;
+background: #0f1f1a;
+border: 1px solid rgba(0,229,160,0.2);
 display: -webkit-flex;
 display: flex;
 -webkit-align-items: center;
 align-items: center;
 -webkit-justify-content: center;
 justify-content: center;
-margin-bottom: 4px;
 }
-
-.empty-icon svg {
-width: 26px;
-height: 26px;
-stroke: #00e5a0;
-fill: none;
-stroke-width: 1.5;
-stroke-linecap: round;
-stroke-linejoin: round;
-}
-
-#empty h2 {
-font-family: ‘Syne’, sans-serif;
-font-size: 22px;
-font-weight: 800;
-color: #e8e8f0;
-letter-spacing: -0.5px;
-}
-
-#empty p {
-font-size: 12px;
-color: #6b6b80;
-line-height: 1.6;
-max-width: 260px;
-}
-
-.suggestions {
-display: -webkit-flex;
-display: flex;
--webkit-flex-direction: column;
-flex-direction: column;
-gap: 8px;
-width: 100%;
-max-width: 340px;
-margin-top: 6px;
-}
-
-.sug {
-background: #18181f;
-border: 1px solid rgba(255,255,255,0.07);
-border-radius: 12px;
-padding: 11px 15px;
-font-size: 12px;
-color: #9090a8;
+.eico svg { width: 24px; height: 24px; stroke: #00e5a0; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+#emp h2 { font-family: ‘Syne’, sans-serif; font-size: 20px; font-weight: 800; color: #e8e8f0; letter-spacing: -.4px; }
+#emp p { font-size: 12px; color: #555570; line-height: 1.6; max-width: 240px; }
+.sugs { display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; gap: 7px; width: 100%; max-width: 320px; margin-top: 4px; }
+.sg {
+background: #13131c;
+border: 1px solid #1e1e2e;
+border-radius: 11px;
+padding: 10px 14px;
+font-size: 14px;
+color: #8080a0;
 cursor: pointer;
 text-align: left;
 font-family: ‘DM Mono’, monospace;
 line-height: 1.4;
 width: 100%;
--webkit-transition: border-color 0.2s, color 0.2s;
-transition: border-color 0.2s, color 0.2s;
+-webkit-appearance: none;
+appearance: none;
 }
+.sg:active { background: #0f1f1a; border-color: rgba(0,229,160,0.25); color: #e8e8f0; }
 
-.sug:active {
-border-color: rgba(0,229,160,0.3);
-color: #e8e8f0;
-background: rgba(0,229,160,0.05);
-}
-
-.msg {
-display: -webkit-flex;
-display: flex;
-gap: 10px;
--webkit-animation: fadeUp 0.25s ease;
-animation: fadeUp 0.25s ease;
-}
-
-.msg.user {
--webkit-flex-direction: row-reverse;
-flex-direction: row-reverse;
-}
-
-@-webkit-keyframes fadeUp {
-from { opacity: 0; -webkit-transform: translateY(8px); transform: translateY(8px); }
-to { opacity: 1; -webkit-transform: none; transform: none; }
-}
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(8px); }
-to { opacity: 1; transform: none; }
-}
+/* ROWS */
+.row { display: -webkit-flex; display: flex; gap: 9px; -webkit-animation: up .25s ease; animation: up .25s ease; }
+.row.me { -webkit-flex-direction: row-reverse; flex-direction: row-reverse; }
+@-webkit-keyframes up { from{opacity:0;-webkit-transform:translateY(8px);transform:translateY(8px)} to{opacity:1;-webkit-transform:none;transform:none} }
+@keyframes up { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
 
 .av {
-width: 30px;
-height: 30px;
-border-radius: 9px;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
+width: 28px; height: 28px;
+border-radius: 8px;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
 font-family: ‘Syne’, sans-serif;
 font-weight: 800;
-font-size: 12px;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
+font-size: 11px;
+-webkit-flex-shrink: 0; flex-shrink: 0;
 }
-
-.msg.ai .av {
-background: rgba(0,229,160,0.1);
-border: 1px solid rgba(0,229,160,0.2);
-color: #00e5a0;
-}
-
-.msg.user .av {
-background: rgba(0,184,255,0.1);
-border: 1px solid rgba(0,184,255,0.2);
-color: #00b8ff;
-}
+.row.ai .av { background: #0f1f1a; border: 1px solid rgba(0,229,160,0.25); color: #00e5a0; }
+.row.me .av { background: #0d1a24; border: 1px solid rgba(0,184,255,0.25); color: #00b8ff; }
 
 .bbl {
-max-width: calc(100% - 44px);
-padding: 12px 15px;
-border-radius: 16px;
-font-size: 13px;
+max-width: calc(100% - 40px);
+padding: 11px 14px;
+border-radius: 14px;
+font-size: 14px;
 line-height: 1.65;
 word-break: break-word;
 }
+.row.ai .bbl { background: #111118; border: 1px solid #1e1e2e; color: #d8d8ea; border-top-left-radius: 4px; }
+.row.me .bbl { background: #131826; border: 1px solid rgba(0,184,255,0.15); color: #d8d8ea; border-top-right-radius: 4px; }
+.bbl pre { background: #0a0a12; border: 1px solid #1e1e2e; border-radius: 8px; padding: 10px; overflow-x: auto; margin: 7px 0; font-size: 12px; }
+.bbl code { font-family: ‘DM Mono’, monospace; font-size: 12px; background: #0f1f1a; padding: 1px 5px; border-radius: 4px; color: #00e5a0; }
+.bbl pre code { background: none; padding: 0; color: #9090b0; }
 
-.msg.ai .bbl {
-background: #111118;
-border: 1px solid rgba(255,255,255,0.07);
-color: #e8e8f0;
-border-top-left-radius: 4px;
-}
+/* TYPING */
+.typing { display: -webkit-flex; display: flex; gap: 5px; -webkit-align-items: center; align-items: center; padding: 3px 0; }
+.td { width: 6px; height: 6px; border-radius: 50%; background: #00e5a0; opacity: .3; -webkit-animation: bo 1.2s ease infinite; animation: bo 1.2s ease infinite; }
+.td:nth-child(2) { -webkit-animation-delay:.2s; animation-delay:.2s; }
+.td:nth-child(3) { -webkit-animation-delay:.4s; animation-delay:.4s; }
+@-webkit-keyframes bo { 0%,60%,100%{-webkit-transform:translateY(0);transform:translateY(0);opacity:.3} 30%{-webkit-transform:translateY(-5px);transform:translateY(-5px);opacity:1} }
+@keyframes bo { 0%,60%,100%{transform:translateY(0);opacity:.3} 30%{transform:translateY(-5px);opacity:1} }
 
-.msg.user .bbl {
-background: #1a1a28;
-border: 1px solid rgba(0,184,255,0.15);
-color: #e8e8f0;
-border-top-right-radius: 4px;
-}
+.errmsg { margin-left: 37px; padding: 9px 13px; background: #1f0d0d; border: 1px solid rgba(255,80,80,0.25); border-radius: 9px; color: #ff8080; font-size: 12px; max-width: calc(100% - 37px); line-height: 1.5; }
 
-.bbl pre {
-background: rgba(0,0,0,0.5);
-border: 1px solid rgba(255,255,255,0.07);
-border-radius: 8px;
-padding: 10px 12px;
-overflow-x: auto;
-margin: 8px 0;
-font-size: 11.5px;
-}
-
-.bbl code {
-font-family: ‘DM Mono’, monospace;
-font-size: 11.5px;
-background: rgba(0,229,160,0.1);
-padding: 1px 5px;
-border-radius: 4px;
-color: #00e5a0;
-}
-
-.bbl pre code {
-background: none;
-padding: 0;
-color: #b0b0c8;
-}
-
-.typing {
-display: -webkit-flex;
-display: flex;
-gap: 5px;
--webkit-align-items: center;
-align-items: center;
-padding: 4px 0;
-}
-
-.td {
-width: 6px;
-height: 6px;
-border-radius: 50%;
-background: #00e5a0;
-opacity: 0.35;
--webkit-animation: bounce 1.2s ease infinite;
-animation: bounce 1.2s ease infinite;
-}
-.td:nth-child(2) { -webkit-animation-delay: 0.2s; animation-delay: 0.2s; }
-.td:nth-child(3) { -webkit-animation-delay: 0.4s; animation-delay: 0.4s; }
-
-@-webkit-keyframes bounce {
-0%, 60%, 100% { -webkit-transform: translateY(0); transform: translateY(0); opacity: 0.35; }
-30% { -webkit-transform: translateY(-6px); transform: translateY(-6px); opacity: 1; }
-}
-@keyframes bounce {
-0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
-30% { transform: translateY(-6px); opacity: 1; }
-}
-
-.err {
-margin-left: 40px;
+/* FOOTER */
+#ftr {
+-webkit-flex-shrink: 0;
+flex-shrink: 0;
+background: #0d0d13;
+border-top: 1px solid #1e1e2e;
 padding: 10px 14px;
-background: rgba(255,80,80,0.08);
-border: 1px solid rgba(255,80,80,0.2);
-border-radius: 10px;
-color: #ff8080;
-font-size: 12px;
-max-width: calc(100% - 40px);
-}
-
-#footer {
-position: fixed;
-bottom: 0;
-left: 50%;
--webkit-transform: translateX(-50%);
-transform: translateX(-50%);
-width: 100%;
-max-width: 800px;
-z-index: 100;
-padding: 10px 16px;
-padding-bottom: max(14px, env(safe-area-inset-bottom));
-background: rgba(10,10,15,0.97);
-border-top: 1px solid rgba(255,255,255,0.07);
+padding-bottom: max(12px, env(safe-area-inset-bottom));
 }
 
 .iw {
 display: -webkit-flex;
 display: flex;
--webkit-align-items: flex-end;
-align-items: flex-end;
-gap: 10px;
-background: #18181f;
-border: 1px solid rgba(255,255,255,0.09);
-border-radius: 18px;
-padding: 9px 9px 9px 15px;
--webkit-transition: border-color 0.2s;
-transition: border-color 0.2s;
+-webkit-align-items: center;
+align-items: center;
+gap: 9px;
+background: #13131c;
+border: 1px solid #1e1e2e;
+border-radius: 16px;
+padding: 0 8px 0 14px;
+min-height: 48px;
 }
-
-.iw:focus-within {
-border-color: rgba(0,229,160,0.3);
-}
+.iw:focus-within { border-color: rgba(0,229,160,0.3); }
 
 textarea {
 -webkit-flex: 1;
@@ -434,262 +245,242 @@ border: none;
 outline: none;
 color: #e8e8f0;
 font-family: ‘DM Mono’, monospace;
-font-size: 13px;
-line-height: 1.5;
+/* 16px evita zoom no Safari iOS */
+font-size: 16px;
+line-height: 1.4;
 resize: none;
-max-height: 120px;
-min-height: 20px;
+max-height: 100px;
+min-height: 24px;
 overflow-y: auto;
 -webkit-overflow-scrolling: touch;
 caret-color: #00e5a0;
 -webkit-appearance: none;
 appearance: none;
+padding: 12px 0;
 }
-
+textarea::placeholder { color: #40405a; }
 textarea::-webkit-scrollbar { display: none; }
-textarea::placeholder { color: #4a4a60; }
 
-#btn {
-width: 36px;
-height: 36px;
-border-radius: 12px;
+#sbtn {
+width: 36px; height: 36px;
+border-radius: 11px;
 border: none;
 background: #00e5a0;
-display: -webkit-flex;
-display: flex;
--webkit-align-items: center;
-align-items: center;
--webkit-justify-content: center;
-justify-content: center;
 cursor: pointer;
--webkit-flex-shrink: 0;
-flex-shrink: 0;
+display: -webkit-flex; display: flex;
+-webkit-align-items: center; align-items: center;
+-webkit-justify-content: center; justify-content: center;
+-webkit-flex-shrink: 0; flex-shrink: 0;
 -webkit-appearance: none;
 appearance: none;
 }
+#sbtn:active { opacity: .75; }
+#sbtn:disabled { background: #16161f; border: 1px solid #1e1e2e; }
+#sbtn svg { width: 14px; height: 14px; stroke: #000; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+#sbtn:disabled svg { stroke: #40405a; }
 
-#btn:active { opacity: 0.8; }
-
-#btn:disabled {
-background: #18181f;
-border: 1px solid rgba(255,255,255,0.07);
-}
-
-#btn svg {
-width: 15px;
-height: 15px;
-stroke: #000000;
-fill: none;
-stroke-width: 2.5;
-stroke-linecap: round;
-stroke-linejoin: round;
-}
-
-#btn:disabled svg { stroke: #4a4a60; }
-
-.fbar {
-display: -webkit-flex;
-display: flex;
--webkit-justify-content: space-between;
-justify-content: space-between;
--webkit-align-items: center;
-align-items: center;
-padding: 5px 2px 0;
-}
-
-.hint { font-size: 10px; color: #4a4a60; }
-
-#clr {
-font-size: 10px;
-color: #4a4a60;
-background: none;
-border: none;
-font-family: ‘DM Mono’, monospace;
-cursor: pointer;
-padding: 2px 4px;
--webkit-appearance: none;
-appearance: none;
-}
-#clr:active { color: #e8e8f0; }
+.fb { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: center; align-items: center; padding: 5px 2px 0; }
+.hint { font-size: 11px; color: #40405a; }
+#clrbtn { font-size: 11px; color: #40405a; background: none; border: none; font-family: ‘DM Mono’, monospace; cursor: pointer; padding: 2px 4px; -webkit-appearance: none; appearance: none; }
+#clrbtn:active { color: #a0a0c0; }
 </style>
 
 </head>
 <body>
 <div id="app">
 
-  <header>
-    <div class="h-left">
+  <div id="hdr">
+    <div class="hl">
       <div class="logo">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       </div>
-      <div class="h-title">IA<span>Chat</span></div>
-      <span class="badge">gpt-oss-120b</span>
+      <div class="htitle">IA<b>Chat</b></div>
+      <span class="mdl">gpt-oss-120b</span>
     </div>
-    <div class="dot"></div>
-  </header>
+    <div class="ondot"></div>
+  </div>
 
-  <div id="messages">
-    <div id="empty">
-      <div class="empty-icon">
+  <div id="msgs">
+    <div id="emp">
+      <div class="eico">
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
       <h2>Como posso ajudar?</h2>
       <p>Powered by Groq &mdash; GPT OSS 120B</p>
-      <div class="suggestions">
-        <button class="sug" onclick="useSug(this)">Explique como funciona a IA de forma simples</button>
-        <button class="sug" onclick="useSug(this)">Escreva um script Python para renomear arquivos em massa</button>
-        <button class="sug" onclick="useSug(this)">Quais sao as novidades do mundo tech em 2025?</button>
+      <div class="sugs">
+        <button class="sg" onclick="useSug(this)">Explique como funciona a IA de forma simples</button>
+        <button class="sg" onclick="useSug(this)">Escreva um script Python para renomear arquivos</button>
+        <button class="sg" onclick="useSug(this)">Quais sao as novidades do mundo tech em 2025?</button>
       </div>
     </div>
   </div>
 
-  <div id="footer">
+  <div id="ftr">
     <div class="iw">
-      <textarea id="inp" placeholder="Digite sua mensagem..." rows="1"></textarea>
-      <button id="btn" onclick="send()">
+      <textarea id="tinp" placeholder="Digite sua mensagem..." rows="1"></textarea>
+      <button id="sbtn" onclick="sendMsg()">
         <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
-    <div class="fbar">
+    <div class="fb">
       <span class="hint">Enter envia &middot; Shift+Enter nova linha</span>
-      <button id="clr" onclick="clearChat()">limpar</button>
+      <button id="clrbtn" onclick="clearAll()">limpar</button>
     </div>
   </div>
 
 </div>
 <script>
-var KEY = "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";
-var MODEL = "openai/gpt-oss-120b";
-var APIURL = "https://api.groq.com/openai/v1/chat/completions";
-var history = [];
-var busy = false;
+var APIKEY = "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";
+var APIMODEL = "openai/gpt-oss-120b";
+var APIENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
 
-var msgs = document.getElementById(“messages”);
-var inp = document.getElementById(“inp”);
-var btn = document.getElementById(“btn”);
-var empty = document.getElementById(“empty”);
+var chatHistory = [];
+var isbusy = false;
 
-inp.addEventListener(“input”, function() {
+var msgsEl = document.getElementById(“msgs”);
+var empEl = document.getElementById(“emp”);
+var tinp = document.getElementById(“tinp”);
+var sbtn = document.getElementById(“sbtn”);
+
+tinp.addEventListener(“input”, function() {
 this.style.height = “auto”;
-this.style.height = Math.min(this.scrollHeight, 120) + “px”;
+this.style.height = Math.min(this.scrollHeight, 100) + “px”;
 });
 
-inp.addEventListener(“keydown”, function(e) {
+tinp.addEventListener(“keydown”, function(e) {
 if (e.key === “Enter” && !e.shiftKey) {
 e.preventDefault();
-send();
+sendMsg();
 }
 });
 
 function useSug(el) {
-inp.value = el.textContent;
-inp.style.height = “auto”;
-inp.style.height = Math.min(inp.scrollHeight, 120) + “px”;
-send();
+tinp.value = el.textContent;
+tinp.style.height = “auto”;
+tinp.style.height = Math.min(tinp.scrollHeight, 100) + “px”;
+sendMsg();
 }
 
-function clearChat() {
-history = [];
-var kids = Array.prototype.slice.call(msgs.children);
+function clearAll() {
+chatHistory = [];
+var kids = Array.prototype.slice.call(msgsEl.children);
 for (var i = 0; i < kids.length; i++) {
-if (kids[i].id !== “empty”) msgs.removeChild(kids[i]);
+if (kids[i].id !== “emp”) msgsEl.removeChild(kids[i]);
 }
-empty.style.display = “flex”;
-}
-
-function esc(t) {
-return t.replace(/&/g,”&”).replace(/</g,”<”).replace(/>/g,”>”);
+empEl.style.display = “-webkit-flex”;
+empEl.style.display = “flex”;
 }
 
-function fmt(t) {
-t = t.replace(/`[\w]*\n?([\s\S]*?)`/g, function(m,c){ return “<pre><code>” + esc(c.trim()) + “</code></pre>”; });
-t = t.replace(/`([^`]+)`/g, function(m,c){ return “<code>” + esc(c) + “</code>”; });
-t = t.replace(/**(.+?)**/g, “<strong>$1</strong>”);
-t = t.replace(/\n/g, “<br>”);
-return t;
+function xesc(s) {
+return s.replace(/&/g,”&”).replace(/</g,”<”).replace(/>/g,”>”);
 }
 
-function addMsg(role, text) {
-empty.style.display = “none”;
+function renderMd(s) {
+s = s.replace(/`[\w]*\n?([\s\S]*?)`/g, function(m,c){ return “<pre><code>” + xesc(c.trim()) + “</code></pre>”; });
+s = s.replace(/`([^`\n]+)`/g, function(m,c){ return “<code>” + xesc(c) + “</code>”; });
+s = s.replace(/**(.+?)**/g, “<strong>$1</strong>”);
+s = s.replace(/\n/g, “<br>”);
+return s;
+}
+
+function addRow(role, text) {
+empEl.style.display = “none”;
 var d = document.createElement(“div”);
-d.className = “msg “ + role;
-var av = role === “user” ? “V” : “G”;
-var body = role === “ai” ? fmt(text) : esc(text).replace(/\n/g,”<br>”);
-d.innerHTML = “<div class="av">” + av + “</div><div class="bbl">” + body + “</div>”;
-msgs.appendChild(d);
-msgs.scrollTop = msgs.scrollHeight;
+d.className = “row “ + role;
+var label = role === “me” ? “V” : “G”;
+var html = role === “me” ? xesc(text).replace(/\n/g,”<br>”) : renderMd(text);
+d.innerHTML = “<div class="av">” + label + “</div><div class="bbl">” + html + “</div>”;
+msgsEl.appendChild(d);
+msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
 function showTyping() {
-empty.style.display = “none”;
+empEl.style.display = “none”;
 var d = document.createElement(“div”);
-d.className = “msg ai”;
-d.id = “typing”;
+d.className = “row ai”;
+d.id = “typrow”;
 d.innerHTML = “<div class="av">G</div><div class="bbl"><div class="typing"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>”;
-msgs.appendChild(d);
-msgs.scrollTop = msgs.scrollHeight;
+msgsEl.appendChild(d);
+msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-function rmTyping() {
-var el = document.getElementById(“typing”);
+function hideTyping() {
+var el = document.getElementById(“typrow”);
 if (el) el.parentNode.removeChild(el);
 }
 
-function showErr(m) {
-rmTyping();
+function showErr(msg) {
+hideTyping();
 var d = document.createElement(“div”);
-d.className = “err”;
-d.textContent = “Erro: “ + m;
-msgs.appendChild(d);
-msgs.scrollTop = msgs.scrollHeight;
+d.className = “errmsg”;
+d.textContent = msg;
+msgsEl.appendChild(d);
+msgsEl.scrollTop = msgsEl.scrollHeight;
 }
 
-async function send() {
-var text = inp.value.trim();
-if (!text || busy) return;
-busy = true;
-btn.disabled = true;
-inp.value = “”;
-inp.style.height = “auto”;
+function sendMsg() {
+var txt = tinp.value.trim();
+if (!txt || isbusy) return;
 
-addMsg(“user”, text);
-history.push({ role: “user”, content: text });
+isbusy = true;
+sbtn.disabled = true;
+tinp.value = “”;
+tinp.style.height = “auto”;
+
+addRow(“me”, txt);
+chatHistory.push({ role: “user”, content: txt });
 showTyping();
 
-try {
-var res = await fetch(APIURL, {
-method: “POST”,
-headers: {
-“Content-Type”: “application/json”,
-“Authorization”: “Bearer “ + KEY
-},
-body: JSON.stringify({
-model: MODEL,
-messages: history,
+var body = JSON.stringify({
+model: APIMODEL,
+messages: chatHistory,
 temperature: 0.7,
 max_tokens: 2048
-})
 });
 
-```
-if (!res.ok) {
-  var e = await res.json();
-  throw new Error(e.error && e.error.message ? e.error.message : "Status " + res.status);
-}
+var xhr = new XMLHttpRequest();
+xhr.open(“POST”, APIENDPOINT, true);
+xhr.setRequestHeader(“Content-Type”, “application/json”);
+xhr.setRequestHeader(“Authorization”, “Bearer “ + APIKEY);
+xhr.timeout = 30000;
 
-var data = await res.json();
+xhr.onreadystatechange = function() {
+if (xhr.readyState !== 4) return;
+isbusy = false;
+sbtn.disabled = false;
+if (xhr.status === 200) {
+try {
+var data = JSON.parse(xhr.responseText);
 var reply = data.choices[0].message.content;
-rmTyping();
-addMsg("ai", reply);
-history.push({ role: "assistant", content: reply });
-```
-
-} catch(err) {
-showErr(err.message || “Falha na conexao”);
-} finally {
-busy = false;
-btn.disabled = false;
+hideTyping();
+addRow(“ai”, reply);
+chatHistory.push({ role: “assistant”, content: reply });
+} catch(e) {
+showErr(“Erro ao processar resposta: “ + e.message);
 }
+} else {
+var errMsg = “Erro HTTP “ + xhr.status;
+try {
+var errData = JSON.parse(xhr.responseText);
+if (errData.error && errData.error.message) errMsg = errData.error.message;
+} catch(e) {}
+showErr(errMsg);
+}
+};
+
+xhr.onerror = function() {
+isbusy = false;
+sbtn.disabled = false;
+showErr(“Falha de rede. Verifique sua conexao.”);
+};
+
+xhr.ontimeout = function() {
+isbusy = false;
+sbtn.disabled = false;
+showErr(“Timeout - requisicao demorou demais.”);
+};
+
+xhr.send(body);
 }
 </script>
 
