@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>IA Chat - Corrigido</title>
+    <title>IA Chat - Versão Estável</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
     <style>
         *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
@@ -63,7 +63,7 @@
         <div class="hl">
             <div class="logo"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
             <div class="htitle">IA<b>Chat</b></div>
-            <span class="ver">v0.0.2</span>
+            <span class="ver">v0.0.3</span>
         </div>
         <div class="dot"></div>
     </div>
@@ -108,7 +108,6 @@
     }
 
     function renderMd(s){
-        // Código simplificado de Markdown
         s = s.replace(/```[\w]*\n?([\s\S]*?)```/g, function(m,c){ return "<pre><code>"+esc(c.trim())+"</code></pre>"; });
         s = s.replace(/`([^`\n]+)`/g, function(m,c){ return "<code>"+esc(c)+"</code>"; });
         s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
@@ -148,8 +147,11 @@
         d.textContent = "Erro: " + msg;
         msgsEl.appendChild(d);
         msgsEl.scrollTop = msgsEl.scrollHeight;
+        
+        // Destravar o estado ocupado para permitir nova digitação
         busy = false;
         sbtn.classList.remove("busy");
+        tinp.focus();
     }
 
     function doSend(){
@@ -159,11 +161,14 @@
 
         busy = true;
         sbtn.classList.add("busy");
-        tinp.value = "";
-        tinp.style.height = "auto";
-
+        
+        // Adiciona mensagem na tela ANTES de limpar, por segurança
         addRow("me", txt);
         chatHistory.push({role: "user", content: txt});
+        
+        // Limpa e foca o campo
+        tinp.value = "";
+        tinp.style.height = "auto";
         showTyping();
 
         var payload = JSON.stringify({
@@ -177,10 +182,14 @@
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("Authorization", "Bearer " + KEY);
         
+        // Timeout de 20 segundos para não travar o app se a internet falhar
+        xhr.timeout = 20000;
+
         xhr.onload = function(){
-            busy = false;
-            sbtn.classList.remove("busy");
             hideTyping();
+            busy = false; // Importante: liberar o estado
+            sbtn.classList.remove("busy");
+
             if(xhr.status === 200){
                 try{
                     var data  = JSON.parse(xhr.responseText);
@@ -188,14 +197,19 @@
                     addRow("ai", reply);
                     chatHistory.push({role: "assistant", content: reply});
                 } catch(e){
-                    showErr("Erro no processamento dos dados.");
+                    showErr("Erro no processamento da resposta.");
                 }
             } else {
-                showErr("Falha na API (Status " + xhr.status + ")");
+                showErr("Servidor ocupado (Status " + xhr.status + ")");
             }
+            
+            // Força o foco de volta para o input
+            setTimeout(() => tinp.focus(), 100);
         };
 
-        xhr.onerror = function(){ showErr("Falha de conexão."); };
+        xhr.onerror = function(){ showErr("Falha de conexão com a rede."); };
+        xhr.ontimeout = function(){ showErr("A IA demorou muito para responder."); };
+        
         xhr.send(payload);
     }
 
@@ -204,11 +218,19 @@
         msgsEl.innerHTML = "";
         msgsEl.appendChild(empEl);
         empEl.style.display = "flex";
+        tinp.focus();
     }
 
     // Eventos
-    sbtn.addEventListener("click", doSend);
-    clrbtn.addEventListener("click", doClean);
+    sbtn.addEventListener("click", function(e){
+        e.preventDefault();
+        doSend();
+    });
+
+    clrbtn.addEventListener("click", function(e){
+        e.preventDefault();
+        doClean();
+    });
 
     tinp.addEventListener("input", function(){
         this.style.height = "auto";
@@ -221,6 +243,9 @@
             doSend(); 
         }
     });
+
+    // Auto-foco inicial
+    window.onload = () => tinp.focus();
 </script>
 </body>
 </html>
